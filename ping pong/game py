@@ -1,0 +1,72 @@
+import pgzrun
+
+
+
+WIDTH = 1000
+HEIGHT = 600
+X = 50
+Y = 50
+color = (156, 16, 236)
+ball = Actor( 'ball' )
+ball_velocity_x = 5
+ball_velocity_y = 5
+paddle = Actor( 'paddle' )
+paddle.pos = (100, HEIGHT - 20)
+score = 0
+missed = False
+
+
+
+
+def draw():
+    screen.fill( color )
+    ball.draw()
+    paddle.draw()
+    screen.draw.text( "score :" + str( score ), (10, 10), fontsize=25, color="white" )
+    if missed:
+        screen.draw.text( "YOU MISSED THE BALL!! Game OVER ", (200, 200), fontsize=40, color="white" )
+
+
+def update():
+    if not missed:
+        ball.right += ball_velocity_x
+        ball.bottom += ball_velocity_y
+        check_boundaries()
+        check_collision()
+
+
+
+
+def on_mouse_move(pos,buttons  ):
+    global missed
+    if not missed:
+        paddle.left = pos[0]
+    if paddle.right > WIDTH:
+        paddle.right = WIDTH
+    if paddle.left < 0:
+        paddle.left = 0
+
+
+
+
+def check_boundaries():
+    global ball_velocity_x, ball_velocity_y
+    if ball.right > WIDTH or ball.left < 0:
+        ball_velocity_x *= -1
+    if ball.bottom > HEIGHT or ball.top < 0:
+        ball_velocity_y *= -1
+
+
+def check_collision():
+    global ball_velocity_y, score,missed
+    if ball.colliderect( paddle ):
+        score += 1
+        ball_velocity_y *= -1
+    elif ball.bottom > paddle.top:
+        missed = True
+
+
+
+
+pgzrun.go()
+
